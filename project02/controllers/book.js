@@ -24,7 +24,8 @@ const getBooks = (req, res, next) => {
 
     dbConnection("books", async (collection) => {
       const books = await collection.find({}).limit(limit).skip(skip).toArray();
-      res.json(books);
+      // res.json(books);
+      return returnJson(res, 200, true, "", books);
     });
   } catch (err) {
     const error = createError(500, error.message);

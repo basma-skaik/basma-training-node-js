@@ -87,27 +87,46 @@ class User {
 
       dbConnection("users", async (collection) => {
         try {
-          const user = await collection.findOne(
-            {
-              username: loginData.username,
-            },
-            {
-              projection: { username: 1, name: 1, password: 1 },
-            }
-          );
-          if (user) {
-            if (compareSync(loginData.password, user.password)) {
+          const dbResult = await collection
+            .aggregate([
+              {
+                $lookup: {
+                  from: "reviewers",
+                  localField: "_id",
+                  foreignField: "_user_id",
+                  as: "reviewer",
+                },
+              },
+              {
+                $match: {
+                  username: loginData.username,
+                },
+              },
+              {
+                $limit: 1,
+              },
+            ])
+            .toArray();
+
+          if (dbResult) {
+            const user = dbResult[0];
+
+            if (!user || !compareSync(loginData.password, user.password)) {
               resolve({
-                status: true,
-                data: user,
+                status: false,
               });
             }
+
+            user.reviewer = user.reviewer ? user.reviewer[0] : null;
+            resolve({
+              status: true,
+              data: user,
+            });
+          } else {
+            resolve({
+              status: false,
+            });
           }
-          resolve({
-            status: false,
-            code: 401,
-            message: "Login Failed",
-          });
         } catch (error) {
           reject({
             status: false,

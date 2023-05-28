@@ -1,11 +1,11 @@
 const { MongoClient } = require("mongodb");
 
-const _uri = "mongodb://127.0.0.1:27017";
+const _uri = process.env.MONGODB_URI;
 
 const dbConnection = (collection, cb) => {
   MongoClient.connect(_uri)
     .then(async (client) => {
-      const db = client.db("nodejs-project").collection(collection);
+      const db = client.db(process.env.MONGODB_DB).collection(collection);
       await cb(db);
       client.close();
     })

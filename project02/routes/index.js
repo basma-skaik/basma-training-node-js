@@ -1,6 +1,6 @@
 const bookRouter = require("./book");
 const reviewresRouter = require("./reviewres");
-const reviewsRouter = require("./reviews");
+const reviewRouter = require("./review");
 const authRouter = require("./auth");
 
 module.exports = (app) => {
@@ -14,5 +14,5 @@ module.exports = (app) => {
   app.use("/books", bookRouter);
   app.use("/auth", authRouter);
   app.use("/reviewres", reviewresRouter);
-  app.use("/reviews", reviewsRouter);
+  app.use("/reviews", reviewRouter);
 };

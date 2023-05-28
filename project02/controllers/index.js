@@ -1,6 +1,6 @@
 module.exports = {
   bookController: require("./book"),
   reviewresController: require("./reviewres"),
-  reviewsController: require("./reviews"),
+  reviewController: require("./review"),
   authController: require("./auth"),
 };

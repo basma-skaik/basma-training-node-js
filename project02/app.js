@@ -1,6 +1,9 @@
 const express = require("express");
 const createError = require("http-errors");
 
+const { returnJson } = require("./my_modules/json_response");
+global.returnJson = returnJson;
+
 const routes = require("./routes");
 const middleware = require("./middleware");
 
@@ -14,7 +17,7 @@ process.on("unhandledRejection", (reason) => {
 //there is a problem when  we send the req
 //cannot set headers after they are sent to the client
 //لما ابعت الريكويست لحال ع الهوم و احط الlang بروح عادي بس لما يكزن مسار تاني غير الهوم برضاش
-middleware(app);
+middleware.global(app);
 
 routes(app);
 
@@ -30,6 +33,8 @@ app.use((error, req, res, next) => {
     status: false,
     message: error.message,
   });
+
+  // return returnJson(res, error.statusCode, false, error.message, null);
 });
 
 module.exports = app;
