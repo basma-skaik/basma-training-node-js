@@ -7,10 +7,11 @@ const add = (req, res, next) => {
 
   reviewData._reviewer_id = req._reviewer_id;
 
-  // const validation = Review.validate(reviewData);
-  // if (validation.error) {
-  //   return next(createError(400, validation.error.message));
-  // }
+  console.log(req._reviewer_id);
+  const validation = Review.validate(reviewData);
+  if (validation.error) {
+    return next(createError(400, validation.error.message));
+  }
 
   const review = new Review(reviewData);
 

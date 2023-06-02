@@ -67,10 +67,12 @@ const login = (req, res, next) => {
       if (result.status) {
         const jwtSecretKey = readFileSync("./configurations/private.key");
 
+        console.log("login", result);
+
         const token = jwt.sign(
           {
             _id: result.data._id,
-            _reviewer_id: result.data.reviewer_id,
+            _reviewer_id: result.data.reviewer._id,
           },
           jwtSecretKey
         );

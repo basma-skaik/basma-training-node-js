@@ -16,6 +16,7 @@ module.exports = (req, res, next) => {
     const decode = jwt.verify(token, jwtSecretKey);
     req._user_id = decode._id;
     req._reviewer_id = decode._reviewer_id;
+    console.log("autnb", decode);
     next();
   } catch (err) {
     return next(createError(401));
