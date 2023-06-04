@@ -10,4 +10,11 @@ const schema = Joi.object({
     .required(),
 });
 
-module.exports = schema;
+const loginSchema = Joi.object({
+  username: Joi.string().alphanum().min(4).max(10).required(),
+  password: Joi.string()
+    .pattern(new RegExp("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$"))
+    .message("The password does not match oue password rules")
+    .required(),
+});
+module.exports = { schema, loginSchema };

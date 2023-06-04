@@ -1,3 +1,6 @@
+const { schema, loginSchema } = require("./user");
+
 module.exports = {
-  userValidator: require("./user"),
+  userValidator: schema,
+  loginValidator: loginSchema,
 };
