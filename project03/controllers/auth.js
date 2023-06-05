@@ -1,5 +1,7 @@
 const { User, Reviewer } = require("../models");
 const createError = require("http-errors");
+const jwt = require("jsonwebtoken");
+const { readFileSync } = require("fs");
 
 const signup = (req, res, next) => {
   const userData = req.body;
@@ -7,7 +9,7 @@ const signup = (req, res, next) => {
   //validation
   const validation = User.validate(userData);
   if (validation.error) {
-    next(createError(400, validation.error.message));
+    return next(createError(400, validation.error.message));
   }
 
   //check existance
@@ -16,11 +18,11 @@ const signup = (req, res, next) => {
     .isExist()
     .then((result) => {
       if (result.check) {
-        next(createError(409, result.message));
+        return next(createError(409, result.message));
       }
     })
     .catch((err) => {
-      next(createError(500, err.message));
+      return next(createError(500, err.message));
     });
 
   //insert user
@@ -34,16 +36,18 @@ const signup = (req, res, next) => {
 
       reviewer.save((result) => {
         if (result.status) {
-          res.status(201).json({
+          return res.status(201).json({
             status: true,
             message: "User has been created successfully",
           });
         } else {
-          next(createError(500, "User created but reviewer not created"));
+          return next(
+            createError(500, "User created but reviewer not created")
+          );
         }
       });
     } else {
-      next(createError(500, status.message));
+      return next(createError(500, status.message));
     }
   });
 };
@@ -52,13 +56,25 @@ const login = (req, res, next) => {
   User.login(req.body)
     .then((result) => {
       if (result.status) {
-        res.status(200).json(result.data);
+        const jwtSecretKey = readFileSync("./configurations/private.key");
+        const token = jwt.sign(
+          {
+            _id: result.data._id,
+            _reviewer_id: result.data.reviewer._id,
+          },
+          jwtSecretKey
+        );
+
+        return res.status(200).json({
+          status: true,
+          token: token,
+        });
       }
-      next(createError(result.code, result.message));
+      return next(createError(result.code, result.message));
     })
 
     .catch((err) => {
-      next(createError(500, err.message));
+      return next(createError(500, err.message));
     });
 };
 

@@ -10,7 +10,7 @@ process.on("unhandledRejection", (reason) => {
   process.exit(1);
 });
 
-middlewares(app);
+middlewares.global(app);
 
 routers(app);
 
